@@ -6,7 +6,8 @@ const io = new (require("socket.io").Server)(server);
 app.use("/static", express.static(__dirname + "/static/"));
 
 const _hd = __dirname + "/html";
-require("./google")(app);
+const google = require("./google");
+google.init(app);
 
 app.get("/", (req, res) => {
     res.sendFile(_hd + "/index.html");

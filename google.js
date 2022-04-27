@@ -20,25 +20,31 @@ passport.use(new GoogleStrategy({
     process.nextTick(() => done(null, { id: profile.id, name: profile.displayName }));
 }));
 
-module.exports = app => {
-    app.use(
-        session({
-            secret: process.env.SECRET,
-            resave: false,
-            saveUninitialized: false
-        })
-    );
-    app.use(passport.initialize());
-    app.use(passport.session());
-
-    app.get("/login", passport.authenticate("google", {
-        scope: ["https://www.googleapis.com/auth/userinfo.profile"]
-    }));
-
-    app.get("/login/google_oauth", passport.authenticate("google", {
-        failureRedirect: "/login/failed",
-        session: true
-    }), (req, res) => {
-        res.redirect("/");
-    });
+module.exports = {
+    init: app => {
+        app.use(
+            session({
+                secret: process.env.SECRET,
+                resave: false,
+                saveUninitialized: false
+            })
+        );
+        app.use(passport.initialize());
+        app.use(passport.session());
+    
+        app.get("/login", passport.authenticate("google", {
+            scope: ["https://www.googleapis.com/auth/userinfo.profile"]
+        }));
+    
+        app.get("/login/google_oauth", passport.authenticate("google", {
+            failureRedirect: "/login/failed",
+            session: true
+        }), (req, res) => {
+            res.redirect("/");
+        });
+    },
+    isAuthenticated: (req, res, next) => {
+        if (req.isAuthenticated()) return next();
+        else res.redirect("/login");
+    }
 };
