@@ -1,0 +1,28 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "Setouchi-h",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s22312/chat.git"
+  },
+  "author": "s22312",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/s22312/chat/issues"
+  },
+  "homepage": "https://github.com/s22312/chat#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.18.0",
+    "express-session": "^1.17.2",
+    "passport": "^0.5.2",
+    "passport-google-oauth": "^2.0.0",
+    "socket.io": "^4.5.0",
+    "socket.io-client": "^4.5.0"
+  }
+}
