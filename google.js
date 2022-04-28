@@ -40,7 +40,7 @@ module.exports = {
             failureRedirect: "/login/failed",
             session: true
         }), (req, res) => {
-            res.redirect("/");
+            res.redirect("/home");
         });
     },
     isAuthenticated: (req, res, next) => {
