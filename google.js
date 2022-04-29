@@ -1,3 +1,5 @@
+// https://nasubifx.hatenablog.com/entry/2021/01/09/022126
+
 const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
@@ -7,17 +9,18 @@ const clientSecret = process.env.GO_ClientSecret;
 const callbackUrl = "https://schat.xthe.org/login/google_oauth";
 
 passport.serializeUser((user, done) => {
-    done(null, { id: user.id, name: user.name});
+    done(null, { id: user.id, name: user.name, familyName: user.familyName, middleName: user.middleName, givenName: user.givenName, email: user.email, photo: user.photo });
 });
 
 passport.deserializeUser((user, done) => {
-    done(null, { id: user.id, name: user.name});
+    done(null, { id: user.id, name: user.name, familyName: user.familyName, middleName: user.middleName, givenName: user.givenName, email: user.email, photo: user.photo });
 });
 
 passport.use(new GoogleStrategy({
     clientID: clientId, clientSecret: clientSecret, callbackURL: callbackUrl
 }, (accessToken, refreshToken, profile, done) => {
-    process.nextTick(() => done(null, { id: profile.id, name: profile.displayName }));
+    //console.dir(profile);
+    process.nextTick(() => done(null, { id: profile.id, name: profile.displayName, familyName: profile.name.familyName, middleName: profile.name.middleName, givenName: profile.name.givenName, email: profile.emails[0].value, photo: profile.photos[0].value }));
 }));
 
 module.exports = {
@@ -32,9 +35,19 @@ module.exports = {
         app.use(passport.initialize());
         app.use(passport.session());
     
-        app.get("/login", passport.authenticate("google", {
-            scope: ["https://www.googleapis.com/auth/userinfo.profile"]
-        }));
+        app.get("/login", (req, res, next) => {
+            req.session.destroy();
+            req.logout();
+            res.clearCookie("connect.sid");
+            passport.authenticate("google", {
+                scope: [
+                    "https://www.googleapis.com/auth/userinfo.profile",
+                    "https://www.googleapis.com/auth/userinfo.email"
+                ],
+                accessType: "offline",
+                prompt: "consent"
+            })(req, res, next);
+        });
     
         app.get("/login/google_oauth", passport.authenticate("google", {
             failureRedirect: "/login/failed",

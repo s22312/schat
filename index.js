@@ -17,6 +17,10 @@ app.get("/home", google.isAuthenticated, (req, res) => {
     res.sendFile(_hd + "/home.html");
 });
 
+app.get("/chat", google.isAuthenticated, (req, res) => {
+    res.send("no");
+});
+
 app.listen(8811, "0.0.0.0", () => {
     console.log("Listening on 0.0.0.0");
 });
